@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<div class="container">
+  <div class="row">
+    <div id="list">
+      <h1>Listing Places {{ page_number }} / {{ total_page_number }}</h1>
+      <div v-for="place in places">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ place.name }}</h5>
+            <p class="card-text">{{ place.address }}</p>
+            <p class="card-text">Hourly: ${{ place.hourly_price}}</p>
+            <p class="card-text">Daily: ${{ place.daily_price }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+var app = new Vue({
+  el: '#list',
+  data: {
+    page_number: 1,
+    total_page_number: 0,
+    places: []
+  },
+
+  mounted: function () {
+    var self = this;
+    $.getJSON('https://thisopenspace.com/lhl-test?page=' + self.page_number.toString(), function(json) {
+      console.log('success');
+      self.total_page_number = json.total % 10 + 1;
+      self.places = json.data;
+    })
+      .fail(function() {
+        console.log( "request failed");
+      })
+  }
+})
+
+</script>
+
