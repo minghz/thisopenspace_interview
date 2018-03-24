@@ -12,8 +12,12 @@
             <div class="card-body">
               <h5 class="card-title">{{ place.name }}</h5>
               <p class="card-text">{{ place.address }}</p>
-              <p class="card-text">Hourly: ${{ place.hourly_price}}</p>
+              <img v-bind:src="place.primary_photo_css_url_small" height="400px"/>
+              <p></p>
+              <p v-if="place.hourly_price" class="card-text">Hourly: ${{ place.square_footage}}</p>
               <p class="card-text">Daily: ${{ place.daily_price }}</p>
+              <p class="card-text">Capacity: {{ place.capacity}} people</p>
+              <p class="card-text">Square footage: {{ place.square_footage}} ft squared</p>
             </div>
           </div>
       </div>
