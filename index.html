@@ -4,9 +4,11 @@
 <div class="container">
   <div class="row">
     <div id="list">
-      <h1>Listing places page {{ page_number }} of {{ total_page_number }}</h1>
+      <h1>Listing places SORTED</h1>
+      <!--
       <button class="btn btn-light" v-if="page_number > 1" v-on:click="load_page(page_number - 1)">Previous Page</button>
       <button class="btn btn-light" v-if="page_number < total_page_number" v-on:click="load_page(page_number + 1)">Next Page</button>
+      -->
       <div v-for="place in places">
           <div class="card">
             <div class="card-body">
@@ -32,20 +34,36 @@ var app = new Vue({
   data: {
     page_number: 1,
     total_page_number: 0,
+    total_places: 0,
     places: []
   },
 
   mounted: function () {
-    this.load_page (this.page_number);
+    this.load_page();
   },
 
   methods: {
     load_page: function (page_number) {
       var vm = this;
-      $.getJSON('https://thisopenspace.com/lhl-test?page=' + page_number.toString(), function(json) {
-        vm.total_page_number = json.total % 10 + 1;
-        vm.places = json.data;
-        vm.page_number = page_number;
+      console.log(vm.total_page_number);
+
+      $.getJSON('https://thisopenspace.com/lhl-test?page=', function(json) {
+        vm.total_page_number = Math.floor(json.total / 10 + 1);
+        vm.total_places = json.total;
+
+        for (i = 1; i <= vm.total_page_number; i++) {
+          $.getJSON('https://thisopenspace.com/lhl-test?page=' + i.toString(), function(json) {
+            vm.places = vm.places.concat(json.data);
+
+            vm.places = vm.places.sort(function (a, b) {
+              return a.daily_price - b.daily_price;
+            });
+          })
+            .fail(function() {
+              console.log( "request failed");
+            })
+        }
+        
       })
         .fail(function() {
           console.log( "request failed");
